@@ -65,12 +65,12 @@ def get_movie_similarity(imdb_id):
     l = []
     m_data=data[data['id']==imdb_id]
     if(len(m_data)==0):
-         x = random.randint(0,3000)
-         temp1=data.loc[x,:]
-         movie = temp1['title']
+        x = random.randint(0,3000)
+        temp1=data.loc[x]
+        movie = temp1['title']
     else:
-        temp1=m_data['id']
-        movie = temp1['title'].values[0]
+        movie = m_data['title'].values[0]
+        l.append(movie)
     temp2 = data[data['title'] == movie]
     idx = temp2.index[0]
     dis = sorted(list(enumerate(similarity[idx])), reverse=True, key=(lambda x: x[1]))[1:11]
