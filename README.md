@@ -170,7 +170,7 @@ Sahil saini- [Github](https://github.com/sahilsaini1234?tab=repositories) [Linke
 
 Samay Sagar - [Twitter](https://twitter.com/https://twitter.com/Rahuldba99) [LinkedIn](https://www.linkedin.com/in/samay-sagar-a28847200/)- rahuldba99@gmail.com
 
-Project Link: [https://github.com/samay-rgb/Pro-Recommender](https://github.com/samay-rgb/Pro-Recommender)
+Frontend Link: [https://github.com/samay-rgb/ChillFlix](https://github.com/samay-rgb/ChillFlix)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
