@@ -1,21 +1,46 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify,request
 from flask_cors import CORS
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from numpy import random
 import requests
+from pymongo import MongoClient
+from flask_pymongo import PyMongo
 import os
-import random
+import random,json
 from datetime import date
 data = pd.read_csv('file1.csv')
 app = Flask(__name__)
 CORS(app)
-
+mongodb= PyMongo(app,uri='mongodb+srv://imsahilsaini32:Rahul@movie.4vzip2w.mongodb.net/movie')
+db = mongodb.db
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
-
+def similiar_list(imdb_id):
+    v = TfidfVectorizer(max_features=5000,stop_words='english')
+    vectors= v.fit_transform(data['final'])
+    similarity = cosine_similarity(vectors)
+    l = []
+    m_data=data[data['id']==imdb_id]
+    if(len(m_data)==0):
+        x = random.randint(0,3000)
+        temp1=data.loc[x]
+        movie = temp1['title']
+    else:
+        movie = m_data['title'].values[0]
+        l.append(movie)
+    temp2 = data[data['title'] == movie]
+    idx = temp2.index[0]
+    dis = sorted(list(enumerate(similarity[idx])), reverse=True, key=(lambda x: x[1]))[1:11]
+    for i in dis:
+        a=str(data['id'][i[0]])
+        re = requests.get('https://api.themoviedb.org/3/movie/'+a+'?api_key=b0c85734cc066c72c35a39b2b47b775e&language=en-US')
+        v = re.json()
+        print(type(re))
+        l.append({'title':data['title'][i[0]],'id':int(data['id'][i[0]]),'movie_detail':v})
+    return l
 
 @app.route("/movielist")
 def get_movie_list():
@@ -78,8 +103,46 @@ def get_movie_similarity(imdb_id):
         a=str(data['id'][i[0]])
         re = requests.get('https://api.themoviedb.org/3/movie/'+a+'?api_key=b0c85734cc066c72c35a39b2b47b775e&language=en-US')
         v = re.json()
+        print(type(re))
         l.append({'title':data['title'][i[0]],'id':int(data['id'][i[0]]),'movie_detail':v})
     return jsonify(l)
+@app.route("/personal_recommend",methods=['GET','POST'])
+def adduser():
+    myjson = request.get_json()
+    email=myjson['email']
+    l={}
+    if db.movie.count_documents({ 'email': email }, limit = 1):
+        result = db.movie.find_one({"email":email})
+        l=result['recent']
+        id1=l[1]
+        id2=l[4]
+        p1=similiar_list((id1))
+        p2=similiar_list((id2))
+        result = []
+        p1.extend(p2)
+        for myDict in p1: 
+           if myDict not in result:
+              result.append(myDict)
+        print(len(result))      
+        return jsonify(result)
+    else:
+        recent=[]
+        print("inserted")
+        db.movie.insert_one({'email':email,'recent':recent})
+    return jsonify(l)
+@app.route("/add",methods=['GET','POST'])
+def add():
+   myjson = request.get_json()
+   email=myjson['email']
+   id=int(myjson['id'])
+   l={}
+   db.movie.update_one({'email': email},{'$push':{'recent':id}})
+   db.movie.update_one(
+    { "recent.5": { "$exists": 1 } },
+    { "$pop": { "recent": -1 } },
+)
+   return jsonify(l)
+
 
 
 if __name__ == "__main__":
