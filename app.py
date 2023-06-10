@@ -103,7 +103,6 @@ def get_movie_similarity(imdb_id):
         a=str(data['id'][i[0]])
         re = requests.get('https://api.themoviedb.org/3/movie/'+a+'?api_key=b0c85734cc066c72c35a39b2b47b775e&language=en-US')
         v = re.json()
-        print(type(re))
         l.append({'title':data['title'][i[0]],'id':int(data['id'][i[0]]),'movie_detail':v})
     return jsonify(l)
 @app.route("/personal_recommend",methods=['GET','POST'])
