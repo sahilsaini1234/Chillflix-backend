@@ -1,4 +1,4 @@
 web: gunicorn main:app \
    --workers 1 \
    --worker-class uvicorn.workers.UvicornWorker \
-   --timeout 600
+   --timeout 5000

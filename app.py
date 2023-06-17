@@ -1,5 +1,8 @@
 from flask import Flask, jsonify,request
 from flask_cors import CORS
+import requests
+import random
+import json
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -84,27 +87,10 @@ def get_ids(moviename):
 
 @app.route("/similarity/<string:imdb_id>")
 def get_movie_similarity(imdb_id):
-    v = TfidfVectorizer(max_features=5000,stop_words='english')
-    vectors= v.fit_transform(data['final'])
-    similarity = cosine_similarity(vectors)
-    l = []
-    m_data=data[data['id']==imdb_id]
-    if(len(m_data)==0):
-        x = random.randint(0,3000)
-        temp1=data.loc[x]
-        movie = temp1['title']
-    else:
-        movie = m_data['title'].values[0]
-        l.append(movie)
-    temp2 = data[data['title'] == movie]
-    idx = temp2.index[0]
-    dis = sorted(list(enumerate(similarity[idx])), reverse=True, key=(lambda x: x[1]))[1:11]
-    for i in dis:
-        a=str(data['id'][i[0]])
-        re = requests.get('https://api.themoviedb.org/3/movie/'+a+'?api_key=b0c85734cc066c72c35a39b2b47b775e&language=en-US')
-        v = re.json()
-        l.append({'title':data['title'][i[0]],'id':int(data['id'][i[0]]),'movie_detail':v})
-    return jsonify(l)
+    result = requests.get('https://movie-recommender-backend-g.onrender.com/similarity/'+imdb_id)
+    r=result.json()
+    print(r)
+    return jsonify(r);
 @app.route("/personal_recommend",methods=['GET','POST'])
 def adduser():
     myjson = request.get_json()
@@ -113,8 +99,9 @@ def adduser():
     if db.movie.count_documents({ 'email': email }, limit = 1):
         result = db.movie.find_one({"email":email})
         l=result['recent']
-        id1=l[1]
-        id2=l[4]
+        n=len(l)
+        id1=random.choice(l)
+        id2=random.choice(l)
         p1=similiar_list((id1))
         p2=similiar_list((id2))
         result = []
