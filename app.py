@@ -44,7 +44,10 @@ def similiar_list(imdb_id):
         print(type(re))
         l.append({'title':data['title'][i[0]],'id':int(data['id'][i[0]]),'movie_detail':v})
     return l
-
+def get_personal(imdb_id):
+    result = requests.get('https://movie-recommender-backend-g.onrender.com/similarity/'+imdb_id)
+    r=result.json()
+    return r;
 @app.route("/movielist")
 def get_movie_list():
     d = list(set(list(data['title'].values)))
@@ -101,13 +104,12 @@ def adduser():
         n=len(l)
         id1=random.choice(l)
         id2=random.choice(l)
-        p1=similiar_list((id1))
-        p2=similiar_list((id2))
-        result = []
-        p1.extend(p2)
-        for myDict in p1: 
-           result.append(myDict)   
-        return jsonify(result)
+        response1=get_personal(str(id1))
+        response2=get_personal(str(id2))
+        for i in response2:
+            if i not in response1:
+                response1.append(i)
+        return jsonify(response1)
     else:
         recent=[]
         print("inserted")
