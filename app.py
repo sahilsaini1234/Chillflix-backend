@@ -89,7 +89,6 @@ def get_ids(moviename):
 def get_movie_similarity(imdb_id):
     result = requests.get('https://movie-recommender-backend-g.onrender.com/similarity/'+imdb_id)
     r=result.json()
-    print(r)
     return jsonify(r);
 @app.route("/personal_recommend",methods=['GET','POST'])
 def adduser():
@@ -107,9 +106,7 @@ def adduser():
         result = []
         p1.extend(p2)
         for myDict in p1: 
-           if myDict not in result:
-              result.append(myDict)
-        print(len(result))      
+           result.append(myDict)   
         return jsonify(result)
     else:
         recent=[]
