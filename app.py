@@ -16,11 +16,7 @@ from datetime import date
 data = pd.read_csv('file1.csv')
 app = Flask(__name__)
 CORS(app)
-import dotenv
-from os import environ 
-from dotenv import load_dotenv
-import os
-load_dotenv()
+
 
 URI = "mongodb+srv://imsahilsaini32:Rahul@movie.4vzip2w.mongodb.net/movie"
 API_KEY ='b0c85734cc066c72c35a39b2b47b775e'
