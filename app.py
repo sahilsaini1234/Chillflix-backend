@@ -111,8 +111,8 @@ def adduser():
         n=len(l)
         id1=random.choice(l)
         id2=random.choice(l)
-        response1=get_personal(str(id1))
-        response2=get_personal(str(id2))
+        response1=similiar_list(str(id1))
+        response2=similiar_list(str(id2))
         for i in response2:
             if i not in response1:
                 response1.append(i)
