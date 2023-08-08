@@ -40,7 +40,6 @@ def similiar_list(imdb_id):
         movie = temp1['title']
     else:
         movie = m_data['title'].values[0]
-        l.append(movie)
     temp2 = data[data['title'] == movie]
     idx = temp2.index[0]
     dis = sorted(list(enumerate(similarity[idx])), reverse=True, key=(lambda x: x[1]))[1:11]
