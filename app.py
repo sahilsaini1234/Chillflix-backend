@@ -32,10 +32,11 @@ def hello_world():
     return "<p>Hello, World!</p>"
 def similiar_list(imdb_id):
     l = []
-    m_data=data[data['id']==imdb_id]
+    m_data=data[data['id']==int(imdb_id)]
     if(len(m_data)==0):
         x = random.randint(0,3000)
         temp1=data.loc[x]
+        print("random")
         movie = temp1['title']
     else:
         movie = m_data['title'].values[0]
@@ -45,7 +46,6 @@ def similiar_list(imdb_id):
     dis = sorted(list(enumerate(similarity[idx])), reverse=True, key=(lambda x: x[1]))[1:11]
     for i in dis:
         a=str(data['id'][i[0]])
-        print(API_KEY)
         re = requests.get('https://api.themoviedb.org/3/movie/'+a+'?api_key='+API_KEY)
         v = re.json()
         l.append({'title':data['title'][i[0]],'id':int(data['id'][i[0]]),'movie_detail':v})
@@ -111,8 +111,10 @@ def adduser():
         n=len(l)
         id1=random.choice(l)
         id2=random.choice(l)
-        response1=similiar_list(str(id1))
-        response2=similiar_list(str(id2))
+        print(id1)
+        print(id2)
+        response1=similiar_list(id1)
+        response2=similiar_list(id2)
         for i in response2:
             if i not in response1:
                 response1.append(i)
