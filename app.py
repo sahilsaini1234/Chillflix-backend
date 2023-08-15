@@ -13,14 +13,14 @@ from flask_pymongo import PyMongo
 import os
 import random,json
 from datetime import date
+from dotenv import load_dotenv
 data = pd.read_csv('file1.csv')
 app = Flask(__name__)
 CORS(app)
-
-
-URI = "mongodb+srv://imsahilsaini32:Rahul@movie.4vzip2w.mongodb.net/movie"
-API_KEY ='b0c85734cc066c72c35a39b2b47b775e'
-mongodb= PyMongo(app,uri=URI)
+load_dotenv()
+URI = os.getenv('URI')
+API_KEY =os.getenv('API_KEY')
+mongodb= PyMongo(app,uri=str(URI))
 db = mongodb.db
 
 v = TfidfVectorizer(max_features=5000,stop_words='english')
